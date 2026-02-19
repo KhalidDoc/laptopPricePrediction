@@ -118,6 +118,10 @@ body {
   gap: 12px;
   margin-bottom: 15px;
 }
+.form-grid select option {
+  background: var(--bg-dark);
+  color: white; 
+}
 
 .form-grid input {
   padding: 10px;

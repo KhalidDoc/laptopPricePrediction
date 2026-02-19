@@ -1,29 +1,33 @@
 import { useEffect, useState } from "react";
-const ResultCard = ({ price }) => {
+
+const ResultCard = ({ prediction }) => {
   const [displayPrice, setDisplayPrice] = useState(0);
 
   useEffect(() => {
-    if (!price) return;
+    if (!prediction?.price) return;
 
     let start = 0;
     const interval = setInterval(() => {
-      start += price / 20;
-      if (start >= price) {
-        setDisplayPrice(price);
+      start += prediction.price / 20;
+      if (start >= prediction.price) {
+        setDisplayPrice(prediction.price);
         clearInterval(interval);
       } else {
         setDisplayPrice(Math.floor(start));
       }
     }, 30);
-  }, [price]);
 
-  if (!price) return null;
+    return () => clearInterval(interval);
+  }, [prediction]);
+
+  if (!prediction) return null;
+
   return (
     <div className="glass-card result-card">
       <h3>Prediction Result</h3>
       <div className="price">₹ {displayPrice}</div>
-      <div className="category premium">
-        {price > 80000 ? "Premium" : price > 40000 ? "Mid-Range" : "Budget"}
+      <div className={`category ${prediction.category.toLowerCase()}`}>
+        {prediction.category}
       </div>
     </div>
   );
