@@ -12,5 +12,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+@app.get("/")
+def root():
+    return {"status": "API running"}
 app.include_router(predict_router)
