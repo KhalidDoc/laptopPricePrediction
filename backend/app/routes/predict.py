@@ -1,15 +1,29 @@
 from fastapi import APIRouter
-from app.services.predictor import predict_price
+from pydantic import BaseModel
+from app.services.predictor import predict_price, calculate_metrics
 import pandas as pd
 
 router = APIRouter()
 
-@router.post("/predict")
-def predict(data: dict):
-    df = pd.DataFrame([data])
-    price = predict_price(df)
+class LaptopInput(BaseModel):
+    Company: str
+    TypeName: str
+    Inches: float
+    ScreenResolution: str
+    Cpu: str
+    Ram: str
+    Memory: str
+    Gpu: str
+    OpSys: str
+    Weight: str
 
-    # simple category rule
+@router.post("/predict")
+def predict(data: LaptopInput):
+
+    df = pd.DataFrame([data.dict()])
+    price = predict_price(df)
+    metrics = calculate_metrics()
+
     if price < 40000:
         category = "Budget"
     elif price < 80000:
@@ -18,6 +32,7 @@ def predict(data: dict):
         category = "Premium"
 
     return {
-        "price": round(price,2),
-        "category": category
+        "price": round(price, 2),
+        "category": category,
+        "metrics": metrics
     }
