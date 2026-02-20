@@ -3,7 +3,6 @@ import Dashboard from "./pages/Dashboard";
 import Insights from "./pages/Insights";
 import Performance from "./pages/Performance";
 import About from "./pages/About";
-import "./styles/dashboard.css";
 
 function App() {
   return (
