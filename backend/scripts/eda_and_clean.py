@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 INPUT_PATH = "data/cleaned_laptop.csv"
-OUTPUT_PATH = "data/cleaned_laptop_perfect.csv"
+OUTPUT_PATH = "data/cleaned_laptop_perfect_1.csv"
 
 
 def eda_and_clean():
@@ -55,6 +55,16 @@ def eda_and_clean():
     df = df[(df["Inches"] >= 11) & (df["Inches"] <= 18)]
 
     # ---------------------------------
+    # 📊 Chart 1 — Price Distribution
+    # ---------------------------------
+    plt.figure(figsize=(8,5))
+    sns.histplot(df["Price"], bins=40, kde=True)
+    plt.title("Laptop Price Distribution")
+    plt.xlabel("Price")
+    plt.ylabel("Frequency")
+    plt.show()
+
+    # ---------------------------------
     # 5️⃣ Target Distribution Before Log
     # ---------------------------------
     print("\nPrice skewness before log:", df["Price"].skew())
@@ -74,6 +84,25 @@ def eda_and_clean():
     print("\nShape after outlier removal:", df.shape)
 
     # ---------------------------------
+    # 📊 Chart 2 — RAM vs Price
+    # ---------------------------------
+    plt.figure(figsize=(8,5))
+    sns.boxplot(x="Ram", y="Price", data=df)
+    plt.title("RAM vs Laptop Price")
+    plt.xlabel("RAM (GB)")
+    plt.ylabel("Price")
+    plt.show()
+
+    # ---------------------------------
+    # 📊 Chart 3 — Company vs Price
+    # ---------------------------------
+    plt.figure(figsize=(10,6))
+    sns.boxplot(x="Company", y="Price", data=df)
+    plt.xticks(rotation=45)
+    plt.title("Laptop Price by Company")
+    plt.show()
+
+    # ---------------------------------
     # 7️⃣ Log Transform Target
     # ---------------------------------
     df["Price"] = np.log1p(df["Price"])
@@ -83,7 +112,8 @@ def eda_and_clean():
     # ---------------------------------
     # 8️⃣ Remove Weak / Noisy Features
     # ---------------------------------
-    low_signal_cols = ["Flash"]  # often weak predictor
+    low_signal_cols = ["Flash"]
+
     df.drop(columns=[c for c in low_signal_cols if c in df.columns], inplace=True)
 
     # ---------------------------------
@@ -98,6 +128,22 @@ def eda_and_clean():
 
     print("\nLowest Correlated Features:\n")
     print(corr.tail(5))
+
+    # ---------------------------------
+    # 📊 Chart 4 — Correlation Heatmap
+    # ---------------------------------
+    plt.figure(figsize=(10,6))
+
+    sns.heatmap(
+        numeric_df.corr(),
+        annot=True,
+        cmap="coolwarm",
+        fmt=".2f"
+    )
+
+    plt.title("Feature Correlation Heatmap")
+
+    plt.show()
 
     # ---------------------------------
     # 🔟 Multicollinearity Check

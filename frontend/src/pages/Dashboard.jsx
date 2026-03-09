@@ -113,7 +113,10 @@ const Dashboard = () => {
                 p-6
                 transition-all duration-300"
               >
-                <ResultCard prediction={prediction} />
+                <h2 className="text-xl font-bold mb-4">Prediction Result:</h2>
+                {prediction && !loading && (
+                  <ResultCard prediction={prediction} />
+                )}
               </div>
 
               {/* Metrics */}

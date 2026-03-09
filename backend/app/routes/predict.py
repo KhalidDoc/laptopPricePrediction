@@ -1,9 +1,13 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from app.services.predictor import predict_price, calculate_metrics
+from app.services.predictor import predict_price, predict_category, calculate_metrics
 import pandas as pd
 
 router = APIRouter()
+
+# --------------------------------------------------
+# INPUT SCHEMA
+# --------------------------------------------------
 
 class LaptopInput(BaseModel):
     Company: str
@@ -17,19 +21,25 @@ class LaptopInput(BaseModel):
     OpSys: str
     Weight: str
 
+
+# --------------------------------------------------
+# PREDICTION ROUTE
+# --------------------------------------------------
+
 @router.post("/predict")
 def predict(data: LaptopInput):
 
+    # convert request to dataframe
     df = pd.DataFrame([data.dict()])
-    price = predict_price(df)
-    metrics = calculate_metrics()
 
-    if price < 40000:
-        category = "Budget"
-    elif price < 80000:
-        category = "Mid-Range"
-    else:
-        category = "Premium"
+    # regression prediction
+    price = predict_price(df)
+
+    # classification prediction
+    category = predict_category(df)
+
+    # evaluation metrics
+    metrics = calculate_metrics()
 
     return {
         "price": round(price, 2),
