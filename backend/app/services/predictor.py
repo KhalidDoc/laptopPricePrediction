@@ -75,6 +75,7 @@ def predict_category(input_df: pd.DataFrame):
     # fallback if classification model not trained
     if category_model is None:
         price = predict_price(input_df)
+        print("Predicted price:", price)
 
         if price < 40000:
             return "Budget"
