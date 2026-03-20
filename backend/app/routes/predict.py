@@ -1,38 +1,26 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
-from app.services.predictor import predict_price, calculate_metrics
+from flask import Blueprint, request, jsonify
 import pandas as pd
 
-router = APIRouter()
+from app.services.predictor import predict_price, predict_category, calculate_metrics
 
-class LaptopInput(BaseModel):
-    Company: str
-    TypeName: str
-    Inches: float
-    ScreenResolution: str
-    Cpu: str
-    Ram: str
-    Memory: str
-    Gpu: str
-    OpSys: str
-    Weight: str
+predict_bp = Blueprint("predict", __name__)
 
-@router.post("/predict")
-def predict(data: LaptopInput):
 
-    df = pd.DataFrame([data.dict()])
+@predict_bp.route("/predict", methods=["POST"])
+def predict():
+
+    data = request.get_json()
+
+    df = pd.DataFrame([data])
+
     price = predict_price(df)
+
+    category = predict_category(df)
+
     metrics = calculate_metrics()
 
-    if price < 40000:
-        category = "Budget"
-    elif price < 80000:
-        category = "Mid-Range"
-    else:
-        category = "Premium"
-
-    return {
+    return jsonify({
         "price": round(price, 2),
         "category": category,
         "metrics": metrics
-    }
+    })

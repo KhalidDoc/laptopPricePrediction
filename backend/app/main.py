@@ -23,5 +23,5 @@ app.include_router(insights_router, prefix="/api", tags=["Insights"])
 app.include_router(metrics_router, prefix="/api", tags=["Performance"])
 @app.get("/")
 def root():
-    return {"status": "API running"}
+    return {"status": "API running"}    
 app.include_router(predict_router)

@@ -30,8 +30,10 @@ const ResultCard = ({ prediction }) => {
   const categoryColors = {
     Budget:
       "bg-green-100 text-green-700 border-green-300 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/30",
-    Midrange:
+
+    "Mid-Range":
       "bg-yellow-100 text-yellow-700 border-yellow-300 dark:bg-yellow-500/20 dark:text-yellow-400 dark:border-yellow-500/30",
+
     Premium:
       "bg-purple-100 text-purple-700 border-purple-300 dark:bg-purple-500/20 dark:text-purple-400 dark:border-purple-500/30",
   };
