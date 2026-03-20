@@ -20,5 +20,7 @@ venv\Scripts\activate
 
 pip install -r requirements.txt (if not installed first)
 
-to run model backend
-uvicorn app.main:app --reload
+# to run model backend
+python -m venv venv
+venv\Scripts\activate
+python -m app.flask_main
