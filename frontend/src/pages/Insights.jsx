@@ -62,7 +62,7 @@ const Insights = () => {
   useEffect(() => {
     const fetchInsights = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/insights");
+        const res = await fetch("http://127.0.0.1:5000/api/insights"); // Backend endpoint for insights data
         const data = await res.json();
         setInsights(data);
       } catch (err) {

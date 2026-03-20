@@ -6,7 +6,7 @@ const Performance = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/metrics");
+        const res = await fetch("http://127.0.0.1:5000/api/metrics");  // Backend endpoint for performance metrics
         const data = await res.json();
         setMetrics(data);
       } catch (err) {

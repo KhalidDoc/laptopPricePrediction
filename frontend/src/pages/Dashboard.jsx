@@ -25,7 +25,7 @@ const Dashboard = () => {
     };
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/predict", {
+      const res = await fetch("http://127.0.0.1:5000/api/predict", { // Backend endpoint for prediction
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
