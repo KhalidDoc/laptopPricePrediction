@@ -87,7 +87,7 @@ const ResultCard = ({ prediction }) => {
 
       {/* Sub Text */}
       <p className="mt-6 text-slate-600 dark:text-slate-500 text-sm">
-        This estimate is generated using your trained XGBoost regression model.
+        This estimate is generated using trained XGBoost regression model.
       </p>
     </div>
   );
