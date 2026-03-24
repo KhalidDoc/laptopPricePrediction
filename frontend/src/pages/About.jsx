@@ -76,7 +76,7 @@ const About = () => {
           <div>
             <h3 className="font-medium mb-2">Backend</h3>
             <ul className="space-y-1">
-              <li>• FastAPI</li>
+              <li>• Flask</li>
               <li>• Python</li>
               <li>• XGBoost</li>
               <li>• Pandas / NumPy</li>
