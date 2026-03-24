@@ -127,7 +127,9 @@ const PredictionForm = ({ onPredict, loading }) => {
         >
           <option value="">RAM</option>
           {rams.map((r) => (
-            <option key={r}>{r} GB</option>
+            <option key={r} value={r}>
+              {r} GB
+            </option>
           ))}
         </select>
 
@@ -185,6 +187,7 @@ const PredictionForm = ({ onPredict, loading }) => {
 
         <input
           type="number"
+          step="0.1"
           placeholder="Screen Size (Inches)"
           className={inputStyle}
           onChange={(e) => setForm({ ...form, Inches: e.target.value })}
@@ -192,6 +195,7 @@ const PredictionForm = ({ onPredict, loading }) => {
 
         <input
           type="number"
+          step="0.01"
           placeholder="Weight (kg)"
           className={inputStyle}
           onChange={(e) => setForm({ ...form, Weight: e.target.value })}

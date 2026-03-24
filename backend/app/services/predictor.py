@@ -47,23 +47,47 @@ else:
 # --------------------------------------------------
 
 def predict_price(input_df: pd.DataFrame):
+    # 1. Clean and Parse (Crucial Step)
+    df = input_df.copy()
+    
+    # Parse Resolution (e.g., "1920x1080" -> X_res: 1920, Y_res: 1080)
+    if "ScreenResolution" in df.columns:
+        res = str(df["ScreenResolution"].iloc[0]).split('x')
+        df['X_res'] = int(res[0])
+        df['Y_res'] = int(res[1])
+        # Calculate PPI (approximate or use a fixed formula)
+        df['PPI'] = (((df['X_res']**2 + df['Y_res']**2)**0.5) / df['Inches'].astype(float)).fillna(0)
+        df.drop("ScreenResolution", axis=1, inplace=True)
 
-    df = load_and_clean_data(input_df)
+    # Parse Memory (This is a simplified example)
+    # You need to extract numbers for SSD and HDD specifically
+    df['SSD'] = 0
+    df['HDD'] = 0
+    mem_val = str(df['Memory'].iloc[0])
+    if "SSD" in mem_val:
+        df['SSD'] = int(mem_val.split('GB')[0]) # Simplified logic
+    if "HDD" in mem_val:
+        df['HDD'] = 1024 if "1TB" in mem_val else 2048 # Simplified
+    df.drop("Memory", axis=1, inplace=True)
 
-    if "Price" in df.columns:
-        df = df.drop("Price", axis=1)
+    # 2. Fix Case Sensitivity
+    df['Gpu_brand'] = df['Gpu'].str.lower() # Match 'intel', 'amd'
+    df['Cpu_tier'] = df['Cpu'] # Ensure this matches training labels
+    
+    # 3. Ensure Numeric Types
+    df['Ram'] = df['Ram'].astype(str).str.extract('(\d+)').astype(int)
+    df['Weight'] = df['Weight'].astype(str).str.extract(r'(\d+\.?\d*)').astype(float)
+    df['Inches'] = df['Inches'].astype(float)
 
-    df = pd.get_dummies(df, drop_first=True)
+    # 4. Dummy Variables
+    df = pd.get_dummies(df) # Don't use drop_first=True here; reindex handles it better
 
+    # 5. Reindex to match trained model features
     model_features = price_model.feature_names_in_
-
     df = df.reindex(columns=model_features, fill_value=0)
 
     prediction_log = price_model.predict(df)[0]
-
-    prediction = np.expm1(prediction_log)
-
-    return float(prediction)
+    return float(np.expm1(prediction_log))
 
 
 # --------------------------------------------------
