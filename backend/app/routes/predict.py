@@ -8,7 +8,7 @@ predict_bp = Blueprint("predict", __name__)
 
 @predict_bp.route("/predict", methods=["POST"])
 def predict():
-
+ try:
     data = request.get_json()
 
     df = pd.DataFrame([data])
@@ -24,3 +24,6 @@ def predict():
         "category": category,
         "metrics": metrics
     })
+ except Exception as e:
+    return jsonify({"error":str(e)}), 500
+    

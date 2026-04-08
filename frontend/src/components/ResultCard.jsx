@@ -1,21 +1,24 @@
 import { useEffect, useState } from "react";
-
+import { formatPrice } from "../utils/formatters";
 const ResultCard = ({ prediction }) => {
   const [displayPrice, setDisplayPrice] = useState(0);
 
   useEffect(() => {
     if (!prediction?.price) return;
 
+    setDisplayPrice(0);
+
     let start = 0;
+    const end = prediction.price;
     const duration = 600;
     const steps = 30;
-    const increment = prediction.price / steps;
+    const increment = end / steps;
     const stepTime = duration / steps;
 
     const interval = setInterval(() => {
       start += increment;
-      if (start >= prediction.price) {
-        setDisplayPrice(prediction.price);
+      if (start >= end) {
+        setDisplayPrice(end);
         clearInterval(interval);
       } else {
         setDisplayPrice(Math.floor(start));
@@ -70,7 +73,7 @@ const ResultCard = ({ prediction }) => {
         dark:from-blue-400 dark:via-cyan-400 dark:to-indigo-400
         bg-clip-text text-transparent drop-shadow-sm"
       >
-        ₹ {displayPrice.toLocaleString()}
+        {formatPrice(displayPrice)}
       </div>
 
       {/* Category Badge */}

@@ -14,26 +14,20 @@ const PredictionForm = ({ onPredict, loading }) => {
     OpSys: "",
   });
 
+  // -----------------------------
+  // DATA (Aligned with Dataset)
+  // -----------------------------
+
   const companies = [
     "Acer",
     "Apple",
     "Asus",
-    "Chuwi",
     "Dell",
-    "Fujitsu",
-    "Google",
     "HP",
-    "Huawei",
-    "LG",
     "Lenovo",
     "MSI",
-    "Mediacom",
-    "Microsoft",
     "Razer",
     "Samsung",
-    "Toshiba",
-    "Vero",
-    "Xiaomi",
   ];
 
   const types = [
@@ -41,19 +35,29 @@ const PredictionForm = ({ onPredict, loading }) => {
     "Gaming",
     "Ultrabook",
     "Workstation",
-    "Netbook",
     "2 in 1 Convertible",
   ];
 
-  const rams = [2, 4, 8, 12, 16, 24, 32, 64];
-  const cpus = ["i3", "i5", "i7", "celeron", "atom"];
+  const rams = [4, 8, 16, 32, 64];
+
+  const cpus = [
+    "Intel Core i3-6006U 2.0GHz",
+    "Intel Core i5-8250U 1.6GHz",
+    "Intel Core i5-7200U 2.5GHz",
+    "Intel Core i7-7500U 2.7GHz",
+    "Intel Core i7-8750H 2.2GHz",
+    "Intel Core i9-8950HK 2.9GHz",
+    "AMD Ryzen 3 2200U 2.5GHz",
+    "AMD Ryzen 5 2500U 2.0GHz",
+    "AMD Ryzen 7 2700U 2.2GHz",
+  ];
 
   const screens = [
     "1366x768",
-    "1600x900",
-    "1920x1080",
-    "2560x1440",
-    "3840x2160",
+    "IPS 1920x1080",
+    "Touch IPS 1920x1080",
+    "IPS 2560x1440",
+    "Touch IPS 3840x2160",
   ];
 
   const storage = [
@@ -63,47 +67,73 @@ const PredictionForm = ({ onPredict, loading }) => {
     "1TB HDD",
     "2TB HDD",
     "256GB SSD + 1TB HDD",
+    "512GB SSD + 1TB HDD",
   ];
 
-  const gpus = ["Intel", "Nvidia", "AMD"];
+  const gpus = [
+    "Intel HD Graphics 620",
+    "Intel UHD Graphics 620",
+    "Nvidia GTX 1050",
+    "Nvidia GTX 1650",
+    "Nvidia RTX 2060",
+    "Nvidia RTX 3060",
+    "AMD Radeon RX 560",
+    "AMD Radeon Vega 8",
+  ];
 
   const osList = [
     "Windows 10",
     "Windows 10 S",
-    "Windows 7",
     "Mac OS X",
     "macOS",
     "Linux",
-    "Chrome OS",
-    "Android",
     "No OS",
   ];
 
+  // -----------------------------
+  // HANDLER
+  // -----------------------------
+
+  const handleChange = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSubmit = () => {
+    // Basic validation
+    for (let key in form) {
+      if (!form[key]) {
+        alert(`Please fill ${key}`);
+        return;
+      }
+    }
+
     onPredict(form);
   };
 
+  // -----------------------------
+  // STYLES
+  // -----------------------------
+
   const inputStyle =
     "w-full rounded-xl px-4 py-3 text-sm transition-all duration-200 " +
-    "border border-slate-300 dark:border-white/10 " +
-    "bg-white dark:bg-slate-900/60 " +
-    "text-slate-800 dark:text-white " +
-    "focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500";
+    "border border-white/10 bg-slate-900/60 text-white " +
+    "focus:outline-none focus:ring-2 focus:ring-blue-500/60";
+
+  // -----------------------------
+  // UI
+  // -----------------------------
 
   return (
-    <div className="flex flex-col h-full transition-colors duration-500">
-      <h3
-        className="text-xl font-semibold mb-6 tracking-tight 
-        bg-linear-to-r from-blue-500 to-cyan-500 
-        bg-clip-text text-transparent"
-      >
+    <div className="flex flex-col h-full">
+      <h3 className="text-xl font-semibold mb-6 bg-linear-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
         Enter Specifications
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Company */}
         <select
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, Company: e.target.value })}
+          onChange={(e) => handleChange("Company", e.target.value)}
         >
           <option value="">Company</option>
           {companies.map((c) => (
@@ -111,9 +141,10 @@ const PredictionForm = ({ onPredict, loading }) => {
           ))}
         </select>
 
+        {/* Type */}
         <select
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, TypeName: e.target.value })}
+          onChange={(e) => handleChange("TypeName", e.target.value)}
         >
           <option value="">Type</option>
           {types.map((t) => (
@@ -121,43 +152,43 @@ const PredictionForm = ({ onPredict, loading }) => {
           ))}
         </select>
 
+        {/* RAM */}
         <select
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, Ram: e.target.value })}
+          onChange={(e) => handleChange("Ram", e.target.value)}
         >
           <option value="">RAM</option>
           {rams.map((r) => (
-            <option key={r} value={r}>
-              {r} GB
-            </option>
+            <option key={r}>{r} GB</option>
           ))}
         </select>
 
+        {/* CPU */}
         <select
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, Cpu: e.target.value })}
+          onChange={(e) => handleChange("Cpu", e.target.value)}
         >
-          <option value="">CPU Tier</option>
+          <option value="">CPU</option>
           {cpus.map((c) => (
             <option key={c}>{c}</option>
           ))}
         </select>
 
+        {/* Screen */}
         <select
           className={inputStyle}
-          onChange={(e) =>
-            setForm({ ...form, ScreenResolution: e.target.value })
-          }
+          onChange={(e) => handleChange("ScreenResolution", e.target.value)}
         >
-          <option value="">Resolution</option>
+          <option value="">Screen</option>
           {screens.map((s) => (
             <option key={s}>{s}</option>
           ))}
         </select>
 
+        {/* Storage */}
         <select
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, Memory: e.target.value })}
+          onChange={(e) => handleChange("Memory", e.target.value)}
         >
           <option value="">Storage</option>
           {storage.map((s) => (
@@ -165,61 +196,57 @@ const PredictionForm = ({ onPredict, loading }) => {
           ))}
         </select>
 
+        {/* GPU */}
         <select
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, Gpu: e.target.value })}
+          onChange={(e) => handleChange("Gpu", e.target.value)}
         >
-          <option value="">GPU Brand</option>
+          <option value="">GPU</option>
           {gpus.map((g) => (
             <option key={g}>{g}</option>
           ))}
         </select>
 
+        {/* OS */}
         <select
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, OpSys: e.target.value })}
+          onChange={(e) => handleChange("OpSys", e.target.value)}
         >
-          <option value="">Operating System</option>
+          <option value="">OS</option>
           {osList.map((o) => (
             <option key={o}>{o}</option>
           ))}
         </select>
 
+        {/* Screen Size */}
         <input
           type="number"
           step="0.1"
           placeholder="Screen Size (Inches)"
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, Inches: e.target.value })}
+          onChange={(e) => handleChange("Inches", e.target.value)}
         />
 
+        {/* Weight */}
         <input
           type="number"
           step="0.01"
           placeholder="Weight (kg)"
           className={inputStyle}
-          onChange={(e) => setForm({ ...form, Weight: e.target.value })}
+          onChange={(e) => handleChange("Weight", e.target.value)}
         />
       </div>
 
+      {/* Submit */}
       <button
         onClick={handleSubmit}
         disabled={loading}
-        className="mt-8 w-full rounded-xl py-3 font-medium tracking-wide
+        className="mt-8 w-full rounded-xl py-3 font-medium
         bg-linear-to-r from-blue-600 to-indigo-600
         hover:from-blue-700 hover:to-indigo-700
-        text-white
-        transition-all duration-300 shadow-lg shadow-blue-500/20
-        disabled:opacity-50 disabled:cursor-not-allowed"
+        text-white transition-all shadow-lg"
       >
-        {loading ? (
-          <span className="flex items-center justify-center gap-2">
-            <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-            Predicting...
-          </span>
-        ) : (
-          "Predict Price"
-        )}
+        {loading ? "Predicting..." : "Predict Price"}
       </button>
     </div>
   );

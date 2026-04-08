@@ -3,135 +3,134 @@ import numpy as np
 import joblib
 import os
 import json
+import re
 
-from app.services.preprocessing import load_and_clean_data
-
-# --------------------------------------------------
+# -----------------------------
 # PATH SETUP
-# --------------------------------------------------
-
+# -----------------------------
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
 
 PRICE_MODEL_PATH = os.path.join(BASE_DIR, "models", "price_model.pkl")
-CATEGORY_MODEL_PATH = os.path.join(BASE_DIR, "models", "category_model.pkl")
 METRICS_PATH = os.path.join(BASE_DIR, "models", "metrics.json")
 
-# --------------------------------------------------
-# LOAD MODELS
-# --------------------------------------------------
 
-price_model = joblib.load(PRICE_MODEL_PATH)
+# -----------------------------
+# LOAD MODEL
+# -----------------------------
+def load_model(path):
+    if os.path.exists(path):
+        return joblib.load(path)
+    return None
 
-# classification model (if exists)
-if os.path.exists(CATEGORY_MODEL_PATH):
-    category_model = joblib.load(CATEGORY_MODEL_PATH)
-else:
-    category_model = None
+price_model = load_model(PRICE_MODEL_PATH)
 
-# --------------------------------------------------
-# LOAD METRICS
-# --------------------------------------------------
-
-if os.path.exists(METRICS_PATH):
-    with open(METRICS_PATH, "r") as f:
-        METRICS_CACHE = json.load(f)
-else:
-    METRICS_CACHE = {
-        "r2": None,
-        "mae": None,
-        "rmse": None
-    }
-
-# --------------------------------------------------
-# PRICE PREDICTION (REGRESSION)
-# --------------------------------------------------
-
-def predict_price(input_df: pd.DataFrame):
-    # 1. Clean and Parse (Crucial Step)
-    df = input_df.copy()
-    
-    # Parse Resolution (e.g., "1920x1080" -> X_res: 1920, Y_res: 1080)
-    if "ScreenResolution" in df.columns:
-        res = str(df["ScreenResolution"].iloc[0]).split('x')
-        df['X_res'] = int(res[0])
-        df['Y_res'] = int(res[1])
-        # Calculate PPI (approximate or use a fixed formula)
-        df['PPI'] = (((df['X_res']**2 + df['Y_res']**2)**0.5) / df['Inches'].astype(float)).fillna(0)
-        df.drop("ScreenResolution", axis=1, inplace=True)
-
-    # Parse Memory (This is a simplified example)
-    # You need to extract numbers for SSD and HDD specifically
-    df['SSD'] = 0
-    df['HDD'] = 0
-    mem_val = str(df['Memory'].iloc[0])
-    if "SSD" in mem_val:
-        df['SSD'] = int(mem_val.split('GB')[0]) # Simplified logic
-    if "HDD" in mem_val:
-        df['HDD'] = 1024 if "1TB" in mem_val else 2048 # Simplified
-    df.drop("Memory", axis=1, inplace=True)
-
-    # 2. Fix Case Sensitivity
-    df['Gpu_brand'] = df['Gpu'].str.lower() # Match 'intel', 'amd'
-    df['Cpu_tier'] = df['Cpu'] # Ensure this matches training labels
-    
-    # 3. Ensure Numeric Types
-    df['Ram'] = df['Ram'].astype(str).str.extract('(\d+)').astype(int)
-    df['Weight'] = df['Weight'].astype(str).str.extract(r'(\d+\.?\d*)').astype(float)
-    df['Inches'] = df['Inches'].astype(float)
-
-    # 4. Dummy Variables
-    df = pd.get_dummies(df) # Don't use drop_first=True here; reindex handles it better
-
-    # 5. Reindex to match trained model features
-    model_features = price_model.feature_names_in_
-    df = df.reindex(columns=model_features, fill_value=0)
-
-    prediction_log = price_model.predict(df)[0]
-    return float(np.expm1(prediction_log))
+with open(METRICS_PATH, "r") as f:
+    METRICS_CACHE = json.load(f)
 
 
-# --------------------------------------------------
-# CATEGORY PREDICTION (CLASSIFICATION)
-# --------------------------------------------------
+# -----------------------------
+# SAME PREPROCESS AS TRAINING
+# -----------------------------
+def preprocess(df):
+    df = df.copy()
 
-def predict_category(input_df: pd.DataFrame):
+    df["Ram"] = df["Ram"].astype(str).str.replace("GB", "").astype(int)
+    df["Weight"] = df["Weight"].astype(str).str.replace("kg", "").astype(float)
 
-    # fallback if classification model not trained
-    if category_model is None:
-        price = predict_price(input_df)
-        print("Predicted price:", price)
+    # SCREEN
+    df["Touchscreen"] = df["ScreenResolution"].str.contains("Touch", case=False, na=False).astype(int)
+    df["IPS"] = df["ScreenResolution"].str.contains("IPS", case=False, na=False).astype(int)
 
-        if price < 40000:
-            return "Budget"
-        elif price < 80000:
-            return "Mid-Range"
-        else:
-            return "Premium"
+    res = df["ScreenResolution"].str.extract(r"(\d+)x(\d+)")
+    df["X_res"] = res[0].astype(float)
+    df["Y_res"] = res[1].astype(float)
 
-    df = load_and_clean_data(input_df)
+    df["PPI"] = np.sqrt(df["X_res"]**2 + df["Y_res"]**2) / df["Inches"]
 
-    if "Price" in df.columns:
-        df = df.drop("Price", axis=1)
+    # STORAGE (HANDLE TB)
+    df["SSD"] = 0
+    df["HDD"] = 0
 
-    df = pd.get_dummies(df, drop_first=True)
+    mem = str(df["Memory"].iloc[0]).upper()
 
-    model_features = category_model.feature_names_in_
+    ssd = re.findall(r"(\d+)(GB|TB)\s*SSD", mem)
+    hdd = re.findall(r"(\d+)(GB|TB)\s*HDD", mem)
 
-    df = df.reindex(columns=model_features, fill_value=0)
+    if ssd:
+        val, unit = ssd[0]
+        df["SSD"] = int(val) * (1024 if unit == "TB" else 1)
 
-    pred = category_model.predict(df)[0]
+    if hdd:
+        val, unit = hdd[0]
+        df["HDD"] = int(val) * (1024 if unit == "TB" else 1)
 
-    if pred == 0:
+    df["Storage_total"] = df["SSD"] + df["HDD"]
+
+    # CPU
+    df["Cpu_gen"] = df["Cpu"].str.extract(r"i[3579]-(\d{4})")[0].fillna(0).astype(float)
+    df["Cpu_speed"] = df["Cpu"].str.extract(r"(\d+\.\d+)GHz")[0].fillna(0).astype(float)
+    df["Cpu_tier"] = df["Cpu"].str.extract(r"(i3|i5|i7|i9|Ryzen 3|Ryzen 5|Ryzen 7)", expand=False).fillna("other")
+
+    df["Cpu_class"] = 0
+    df.loc[df["Cpu_tier"].str.contains("i3", na=False), "Cpu_class"] = 1
+    df.loc[df["Cpu_tier"].str.contains("i5", na=False), "Cpu_class"] = 2
+    df.loc[df["Cpu_tier"].str.contains("i7", na=False), "Cpu_class"] = 3
+    df.loc[df["Cpu_tier"].str.contains("i9", na=False), "Cpu_class"] = 4
+
+    # GPU
+    df["Gpu_model_num"] = df["Gpu"].str.extract(r"(\d{3,4})")[0].fillna(0).astype(float)
+    df["Dedicated_gpu"] = df["Gpu"].str.contains("nvidia|amd|rtx|gtx", case=False, na=False).astype(int)
+
+    df["Gpu_tier"] = 0
+    df.loc[df["Gpu"].str.contains("rtx", case=False), "Gpu_tier"] = 3
+    df.loc[df["Gpu"].str.contains("gtx", case=False), "Gpu_tier"] = 2
+    df.loc[df["Gpu"].str.contains("mx", case=False), "Gpu_tier"] = 1
+
+    # OS
+    df["MacOS"] = df["OpSys"].str.contains("mac", case=False, na=False).astype(int)
+
+    # BRAND
+    premium_brands = ["Apple", "Razer", "MSI"]
+    df["Premium_brand"] = df["Company"].isin(premium_brands).astype(int)
+
+    # INTERACTION
+    df["Power_score"] = (
+        df["Cpu_class"] * 2 +
+        df["Gpu_tier"] * 3 +
+        (df["Ram"] / 8)
+    )
+
+    df.drop(columns=["Cpu", "Gpu", "Memory", "ScreenResolution"], inplace=True)
+
+    return df
+
+
+# -----------------------------
+# PREDICT
+# -----------------------------
+def predict_price(input_df):
+    df = preprocess(input_df)
+
+    df = pd.get_dummies(df)
+
+    # Align with model features
+    df = df.reindex(columns=price_model.feature_names_in_, fill_value=0)
+
+    pred_log = price_model.predict(df)[0]
+
+    return float(np.exp(pred_log))  # IMPORTANT FIX
+
+
+def predict_category(input_df):
+    price = predict_price(input_df)
+
+    if price < 45000:
         return "Budget"
-    elif pred == 1:
+    elif price < 90000:
         return "Mid-Range"
     else:
         return "Premium"
 
-
-# --------------------------------------------------
-# RETURN MODEL METRICS
-# --------------------------------------------------
 
 def calculate_metrics():
     return METRICS_CACHE
