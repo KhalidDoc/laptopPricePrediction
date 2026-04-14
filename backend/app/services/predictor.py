@@ -15,21 +15,35 @@ METRICS_PATH = os.path.join(BASE_DIR, "models", "metrics.json")
 
 
 # -----------------------------
-# LOAD MODEL
+# LOAD MODEL (SAFE)
 # -----------------------------
 def load_model(path):
-    if os.path.exists(path):
-        return joblib.load(path)
-    return None
+    print(f"[DEBUG] Looking for model at: {path}")
 
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"❌ Model not found at: {path}")
+
+    print("[DEBUG] Model found, loading...")
+    return joblib.load(path)
+
+
+def load_metrics(path):
+    print(f"[DEBUG] Looking for metrics at: {path}")
+
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"❌ Metrics file not found at: {path}")
+
+    with open(path, "r") as f:
+        return json.load(f)
+
+
+# Load at startup
 price_model = load_model(PRICE_MODEL_PATH)
-
-with open(METRICS_PATH, "r") as f:
-    METRICS_CACHE = json.load(f)
+METRICS_CACHE = load_metrics(METRICS_PATH)
 
 
 # -----------------------------
-# SAME PREPROCESS AS TRAINING
+# PREPROCESS FUNCTION
 # -----------------------------
 def preprocess(df):
     df = df.copy()
@@ -47,7 +61,7 @@ def preprocess(df):
 
     df["PPI"] = np.sqrt(df["X_res"]**2 + df["Y_res"]**2) / df["Inches"]
 
-    # STORAGE (HANDLE TB)
+    # STORAGE
     df["SSD"] = 0
     df["HDD"] = 0
 
@@ -82,9 +96,9 @@ def preprocess(df):
     df["Dedicated_gpu"] = df["Gpu"].str.contains("nvidia|amd|rtx|gtx", case=False, na=False).astype(int)
 
     df["Gpu_tier"] = 0
-    df.loc[df["Gpu"].str.contains("rtx", case=False), "Gpu_tier"] = 3
-    df.loc[df["Gpu"].str.contains("gtx", case=False), "Gpu_tier"] = 2
-    df.loc[df["Gpu"].str.contains("mx", case=False), "Gpu_tier"] = 1
+    df.loc[df["Gpu"].str.contains("rtx", case=False, na=False), "Gpu_tier"] = 3
+    df.loc[df["Gpu"].str.contains("gtx", case=False, na=False), "Gpu_tier"] = 2
+    df.loc[df["Gpu"].str.contains("mx", case=False, na=False), "Gpu_tier"] = 1
 
     # OS
     df["MacOS"] = df["OpSys"].str.contains("mac", case=False, na=False).astype(int)
@@ -106,11 +120,13 @@ def preprocess(df):
 
 
 # -----------------------------
-# PREDICT
+# PREDICT FUNCTIONS
 # -----------------------------
 def predict_price(input_df):
-    df = preprocess(input_df)
+    if price_model is None:
+        raise ValueError("❌ Model is not loaded properly")
 
+    df = preprocess(input_df)
     df = pd.get_dummies(df)
 
     # Align with model features
@@ -118,7 +134,7 @@ def predict_price(input_df):
 
     pred_log = price_model.predict(df)[0]
 
-    return float(np.exp(pred_log))  # IMPORTANT FIX
+    return float(np.exp(pred_log))
 
 
 def predict_category(input_df):
