@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import StatsCards from "../insights/StatsCards";
-const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = process.env.REACT_APP_API_URL || "https://laptoppriceprediction-5tom.onrender.com";
 
 import { Bar, Line } from "react-chartjs-2";
 

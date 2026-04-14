@@ -2,7 +2,7 @@ import { useState } from "react";
 import PredictionForm from "../components/PredictionForm";
 import ResultCard from "../components/ResultCard";
 import Metrics from "../components/Metrics";
-const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = process.env.REACT_APP_API_URL || "https://laptoppriceprediction-5tom.onrender.com";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);

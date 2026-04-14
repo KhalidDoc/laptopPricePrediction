@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = process.env.REACT_APP_API_URL || "https://laptoppriceprediction-5tom.onrender.com";
 
 const PredictionForm = ({ onPredict, loading }) => {
   const [form, setForm] = useState({
