@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import StatsCards from "../insights/StatsCards";
-const BASE_URL =
-  import.meta.env.VITE_API_URL ??
-  "https://laptoppriceprediction-5tom.onrender.com";
+const BASE_URL = import.meta.env.VITE_API_URL ;
 import { Bar, Line } from "react-chartjs-2";
 
 import {

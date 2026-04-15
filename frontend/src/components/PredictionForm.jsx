@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-const BASE_URL =
-  import.meta.env.VITE_API_URL ??
-  "https://laptoppriceprediction-5tom.onrender.com";
+const BASE_URL = import.meta.env.VITE_API_URL ;
 
 const PredictionForm = ({ onPredict, loading }) => {
   const [form, setForm] = useState({

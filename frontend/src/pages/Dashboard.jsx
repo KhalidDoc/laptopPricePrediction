@@ -2,11 +2,7 @@ import { useState } from "react";
 import PredictionForm from "../components/PredictionForm";
 import ResultCard from "../components/ResultCard";
 import Metrics from "../components/Metrics";
-const BASE_URL =
-  import.meta.env.VITE_API_URL &&
-  import.meta.env.VITE_API_URL !== "undefined"
-    ? import.meta.env.VITE_API_URL
-    : "https://laptoppriceprediction-5tom.onrender.com";
+const BASE_URL = import.meta.env.VITE_API_URL ;
 console.log("ENV:", import.meta.env);
 console.log("API URL:", import.meta.env.VITE_API_URL);
 

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-const BASE_URL =
-  import.meta.env.VITE_API_URL ??
-  "https://laptoppriceprediction-5tom.onrender.com";
+const BASE_URL = import.meta.env.VITE_API_URL ;
 
 const Performance = () => {
   const [metrics, setMetrics] = useState(null);
