@@ -5,6 +5,8 @@ import Metrics from "../components/Metrics";
 const BASE_URL =
   import.meta.env.VITE_API_URL ??
   "https://laptoppriceprediction-5tom.onrender.com";
+console.log("ENV:", import.meta.env);
+console.log("API URL:", import.meta.env.VITE_API_URL);
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
