@@ -9,6 +9,7 @@ predict_bp = Blueprint("predict", __name__)
 @predict_bp.route("/predict", methods=["POST"])
 def predict():
  try:
+   #  print("Received data:", request.get_json())  # Debugging statement
     data = request.get_json()
 
     df = pd.DataFrame([data])

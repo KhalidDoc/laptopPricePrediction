@@ -2,7 +2,9 @@ import { useState } from "react";
 import PredictionForm from "../components/PredictionForm";
 import ResultCard from "../components/ResultCard";
 import Metrics from "../components/Metrics";
-const BASE_URL = process.env.REACT_APP_API_URL || "https://laptoppriceprediction-5tom.onrender.com";
+const BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://127.0.0.1:5000";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(false);
