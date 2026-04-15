@@ -46,7 +46,7 @@ def preprocess(df):
     df["PPI"] = np.sqrt(df["X_res"]**2 + df["Y_res"]**2) / df["Inches"]
 
     # -----------------------------
-    # STORAGE (HANDLE TB + GB)
+    # STORAGE 
     # -----------------------------
     df["SSD"] = 0
     df["HDD"] = 0
