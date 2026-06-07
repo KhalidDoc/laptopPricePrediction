@@ -3,7 +3,7 @@
 ![XGBoost](https://img.shields.io/badge/ML-XGBoost-green)
 ![Deployment](https://img.shields.io/badge/Deployed-Vercel%20%2B%20Render-purple)
 
-# 💻 Laptop Price Prediction System
+#  Laptop Price Prediction System
 
 > End-to-end ML system with real-time prediction, deployed using Vercel and Render.
 
@@ -11,14 +11,14 @@ A full-stack machine learning web application that predicts laptop prices based 
 
 ---
 
-## 🌐 Live Demo
+##  Live Demo
 
 Frontend: https://laptop-price-prediction-amber.vercel.app <br>
 Backend API: https://laptoppriceprediction-5tom.onrender.com
 
 ---
 
-## 🚀 Project Overview
+##  Project Overview
 
 This project allows users to input laptop specifications such as RAM, CPU, GPU, storage, and more, and get an estimated price instantly.
 
@@ -32,44 +32,44 @@ This project simulates a real-world machine learning deployment pipeline, includ
 
 ---
 
-## 🧠 Features
+##  Features
 
-* 🔍 Predict laptop price using ML model
-* 📊 Display model performance metrics (RMSE, MAE, R²)
-* 📈 Insights dashboard for data understanding
-* ⚡ Fast API responses using Flask
-* 🌐 Fully deployed frontend and backend
-* 🔄 Real-time interaction between frontend and backend
+*  Predict laptop price using ML model
+*  Display model performance metrics (RMSE, MAE, R²)
+*  Insights dashboard for data understanding
+*  Fast API responses using Flask
+*  Fully deployed frontend and backend
+*  Real-time interaction between frontend and backend
 
 ---
 
-## 🏗️ Tech Stack
+##  Tech Stack
 
-### 🔹 Frontend
+###  Frontend
 
 * React (Vite)
 * HTML, CSS, JavaScript
 
-### 🔹 Backend
+###  Backend
 
 * Python
 * Flask
 * Flask-CORS
 
-### 🔹 Machine Learning
+###  Machine Learning
 
 * Scikit-learn
 * XGBoost
 * Pandas, NumPy
 
-### 🔹 Deployment
+###  Deployment
 
 * Frontend: Vercel
 * Backend: Render
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 backend/
@@ -89,7 +89,7 @@ frontend/
 
 ---
 
-## ⚙️ How It Works
+##  How It Works
 
 1. User enters laptop specifications on frontend
 2. Frontend sends data to Flask API
@@ -101,7 +101,7 @@ frontend/
 
 ---
 
-## 🧪 Model Details
+##  Model Details
 
 * Algorithm: XGBoost Regressor
 * Target: Log-transformed price
@@ -118,19 +118,19 @@ frontend/
 
 ---
 
-## 📊 Dataset
+##  Dataset
 
 This project uses the publicly available dataset:
 
 🔗 https://www.kaggle.com/datasets/mohidabdulrehman/laptop-price-dataset
 
-**⚠️ Limitation:**
+** Limitation:**
 The model is trained on a relatively limited dataset with a fixed set of features.
 Predictions may not generalize perfectly to newer laptop models or unseen configurations.
 
 ---
 
-## 🔗 API Endpoints
+##  API Endpoints
 
 * POST `/api/predict` → Predict laptop price
 * GET `/api/metrics` → Model performance metrics
@@ -139,9 +139,9 @@ Predictions may not generalize perfectly to newer laptop models or unseen config
 
 ---
 
-## 🛠️ Local Setup
+##  Local Setup
 
-### 🔹 1. Clone the repository
+###  1. Clone the repository
 
 ```bash
 git clone https://github.com/KhalidDoc/laptop-price-prediction.git
@@ -150,7 +150,7 @@ cd laptop-price-prediction
 
 ---
 
-### 🔹 2. Backend Setup
+###  2. Backend Setup
 
 ```bash
 cd backend
@@ -174,7 +174,7 @@ http://127.0.0.1:5000
 
 ---
 
-### 🔹 3. Frontend Setup
+###  3. Frontend Setup
 
 ```bash
 cd frontend
@@ -195,7 +195,7 @@ npm run dev
 
 ---
 
-## 🌐 Deployment
+##  Deployment
 
 ### Frontend (Vercel)
 
@@ -220,7 +220,7 @@ models/
 
 ---
 
-## ⚠️ Important Notes
+##  Important Notes
 
 * Model training scripts are in `/scripts` and are NOT used in production
 * Backend only loads pre-trained models
@@ -229,7 +229,7 @@ models/
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 <img width="1823" height="929" alt="image" src="https://github.com/user-attachments/assets/f3461d1d-9f0f-41e0-a2b5-a9879419bb5b" />
 <img width="1896" height="964" alt="image" src="https://github.com/user-attachments/assets/bb043e55-4231-47f3-9232-2958e52fca8a" />
@@ -242,7 +242,7 @@ models/
 
 ---
 
-## 🎯 Future Improvements
+##  Future Improvements
 
 * Add user authentication
 * Save prediction history
@@ -252,26 +252,26 @@ models/
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Pull requests are welcome. For major changes, please open an issue first.
 
 ---
 
-## 📜 License
+##  License
 
 This project is for educational purposes.
 
 ---
 
-## 👨‍💻 Contributors
+##  Contributors
 
 * Khalid Doctor (Project Lead) — Backend development, API integration, deployment, debugging, system design
 * Neel Diwani — Frontend development, model fine-tuning, classification model development
 
 ---
 
-## ⭐ Final Note
+##  Final Note
 
 This project demonstrates end-to-end ML deployment including preprocessing, model training, API development, frontend integration, and cloud deployment.
 
