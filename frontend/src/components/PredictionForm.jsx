@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+const BASE_URL = import.meta.env.VITE_API_URL ;
 
 const PredictionForm = ({ onPredict, loading }) => {
   const [form, setForm] = useState({
@@ -20,7 +21,7 @@ const PredictionForm = ({ onPredict, loading }) => {
   // FETCH OPTIONS
   // -----------------------------
   useEffect(() => {
-    fetch("http://localhost:5000/api/options")
+    fetch(`${BASE_URL}/api/options`)
       .then((res) => res.json())
       .then((data) => setOptions(data))
       .catch((err) => console.error("Error loading options:", err));

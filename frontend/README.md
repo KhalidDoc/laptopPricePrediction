@@ -23,4 +23,4 @@ pip install -r requirements.txt (if not installed first)
 # to run model backend
 python -m venv venv
 venv\Scripts\activate
-python -m app.flask_main
+python -m app.app
