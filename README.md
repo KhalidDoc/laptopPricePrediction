@@ -13,7 +13,7 @@ A full-stack machine learning web application that predicts laptop prices based 
 
 ## 🌐 Live Demo
 
-Frontend: https://laptop-price-prediction-olive.vercel.app
+Frontend: https://laptop-price-prediction-olive.vercel.app</br>
 Backend API: https://laptoppriceprediction-5tom.onrender.com
 
 ---
